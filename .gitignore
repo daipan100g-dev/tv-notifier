@@ -1,0 +1,12 @@
+node_modules/
+dist/
+worker-dist/
+.wrangler/
+.dev.vars
+.env
+.env.*
+!.env.example
+wrangler.local.jsonc
+*.log
+coverage/
+vapid-keys.json
