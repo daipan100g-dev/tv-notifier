@@ -47,6 +47,22 @@ test('parses v3 service/publication data without storing description or archive 
   assert.throws(() => parseNhk({ e1: { publication: [{ name: '地球ドラマチック', startDate: '2026-01-11T12:00:00', endDate: f.end }] } }, f.queryDate, { ...DEFAULTS, channels: ['e1'] }, now));
 });
 
+test('identical simulcasts on subchannels are deduplicated without losing distinct broadcasts', () => {
+  const f = fixture();
+  const event = { name: f.title, startDate: f.start, endDate: f.end };
+  const data = Object.fromEntries(['g1', 'g2', 'e1', 'e3', 's1', 's2', 's5'].map(channel => [channel, { publication: [event] }]));
+  const prefs = { ...DEFAULTS, channels: ['g1', 'g2', 'e1', 'e3', 's1', 's2', 's5'] as const };
+  const selected = { ...prefs, channels: [...prefs.channels] };
+  assert.deepEqual(parseNhk(data, f.queryDate, selected, now).map(b => b.channel), ['g1', 'e1', 's1', 's5']);
+  assert.equal(parseNhk(data, f.queryDate, { ...DEFAULTS, channels: ['e3'] }, now)[0].channel, 'e3');
+  data.e3.publication = [{ ...event, name: '地球ドラマチック 別のエピソード' }];
+  assert.equal(parseNhk(data, f.queryDate, DEFAULTS, now).length, 3);
+  data.e3.publication = [{ ...event, startDate: new Date(Date.parse(f.start) + 60_000).toISOString() }];
+  assert.equal(parseNhk(data, f.queryDate, DEFAULTS, now).length, 3);
+  data.e3.publication = [{ ...event, endDate: new Date(Date.parse(f.end) + 60_000).toISOString() }];
+  assert.equal(parseNhk(data, f.queryDate, DEFAULTS, now).length, 3);
+});
+
 test('repeated slots and duplicate API rows do not create repeat notifications', () => {
   const a = fixture();
   const result = reconcile([a], [fixture(a.start, 'b'), fixture(a.start, 'c')], [a.queryDate], now);
