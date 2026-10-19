@@ -44,7 +44,7 @@ Node.js 24 LTS / npmを推奨します。
 ```sh
 npm install
 npm run dev                 # PWA画面。サーバー未接続でも番組登録は可能
-npm run check               # 型検査・lint・テスト・PWAビルド・Worker dry-run
+npm run check               # 型検査・lint・テスト・PWAビルド・Worker dry-run/実行テスト
 ```
 
 本番用の`dist/`には、内容ハッシュ付きService Workerとアセット一覧を生成します。

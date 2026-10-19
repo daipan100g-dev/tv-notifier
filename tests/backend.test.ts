@@ -54,7 +54,7 @@ test('subscription registration, encrypted test push, throttling, expiry and del
   assert.equal((await call('subscription', 'PUT', { id: 'test-device-123', subscription: sub })).status, 200);
   let expired = false;
   const send = t.mock.method(globalThis, 'fetch', async (_url: string, options: RequestInit) => {
-    assert.equal(options.redirect, 'error');
+    assert.equal(options.redirect, 'manual');
     assert.equal(new Headers(options.headers).get('content-encoding'), 'aes128gcm');
     assert.ok((options.body as Uint8Array).length > 100);
     return new Response(null, { status: expired ? 410 : 201 });

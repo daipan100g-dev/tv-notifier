@@ -39,7 +39,7 @@ export function parseNhk(value: unknown, date: string, prefs: Preferences, now: 
 export async function fetchDate(key: string, date: string, prefs: Preferences, now: number): Promise<Broadcast[]> {
   const url = new URL('https://program-api.nhk.jp/v3/papiPgDateTv');
   url.search = new URLSearchParams({ service: 'tv', area: '140', date, key }).toString();
-  const response = await fetch(url, { signal: AbortSignal.timeout(20_000), redirect: 'error' });
+  const response = await fetch(url, { signal: AbortSignal.timeout(20_000), redirect: 'manual' });
   if (!response.ok) throw new Error('NHK request failed');
   // The upstream URL contains the API key; never include it in errors or logs.
   return parseNhk(await response.json(), date, prefs, now);

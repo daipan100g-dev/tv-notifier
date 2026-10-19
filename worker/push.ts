@@ -42,7 +42,7 @@ export async function sendPush(env: PushEnv, subscription: Subscription, data: o
   });
   const response = await fetch(subscription.endpoint, {
     method: 'POST', headers: payload.headers, body: new Uint8Array(payload.body!),
-    redirect: 'error', signal: AbortSignal.timeout(15_000),
+    redirect: 'manual', signal: AbortSignal.timeout(15_000),
   });
   await response.body?.cancel();
   return response.status;
