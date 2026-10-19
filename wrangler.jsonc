@@ -1,0 +1,22 @@
+{
+  "$schema": "node_modules/wrangler/config-schema.json",
+  "name": "tv-notifier",
+  "main": "worker/index.ts",
+  "compatibility_date": "2025-10-01",
+  "compatibility_flags": ["nodejs_compat"],
+  "workers_dev": true,
+  "send_metrics": false,
+  "observability": { "enabled": false },
+  "triggers": { "crons": ["2,9,16,23,30,37,44,51 * * * *"] },
+  "vars": {
+    "APP_ORIGIN": "https://daipan100g-dev.github.io",
+    "APP_URL": "https://daipan100g-dev.github.io/tv-notifier/",
+    "VAPID_SUBJECT": "https://github.com/daipan100g-dev/tv-notifier"
+  },
+  "d1_databases": [{
+    "binding": "DB",
+    "database_name": "tv-notifier",
+    "database_id": "00000000-0000-0000-0000-000000000000",
+    "migrations_dir": "migrations"
+  }]
+}
