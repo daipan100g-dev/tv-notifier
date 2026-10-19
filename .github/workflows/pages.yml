@@ -22,7 +22,7 @@ jobs:
       - run: npm ci
       - run: npm run check
         env:
-          VITE_API_URL: ${{ vars.VITE_API_URL }}
+          VITE_API_URL: ${{ vars.VITE_API_URL || 'https://tv-notifier.daipan100g-dev.workers.dev' }}
       - uses: actions/upload-pages-artifact@v3
         with:
           path: dist

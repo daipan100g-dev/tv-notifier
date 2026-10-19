@@ -81,7 +81,7 @@ npx wrangler login
 npx wrangler d1 create tv-notifier
 ```
 
-表示された`database_id`を`wrangler.jsonc`の仮のUUIDから置き換えます。ID自体は秘密ではありません。
+表示された`database_id`を`wrangler.jsonc`の`database_id`へ設定します。既存の値はこのリポジトリ所有者の本番DBを指します。ID自体は秘密ではありません。
 フォークする場合は`APP_ORIGIN`をPagesのオリジン（パスなし）、`APP_URL`をPWAのURL（末尾`/`付き）に変更します。
 
 ```sh
@@ -113,7 +113,7 @@ VAPID鍵を再生成すると既存の購読を作り直す必要があります
 
 1. このPRをマージ（自動マージはしません）。
 2. GitHubリポジトリ **Settings → Pages → Source → GitHub Actions** を選択。
-3. 任意：**Settings → Secrets and variables → Actions → Variables**に`VITE_API_URL`をWorkerのHTTPS URLとして登録。**これは公開値**です。APIキーや接続キーは絶対に`VITE_*`へ入れないでください。
+3. 任意：**Settings → Secrets and variables → Actions → Variables**に`VITE_API_URL`をWorkerのHTTPS URLとして登録。未設定なら`https://tv-notifier.daipan100g-dev.workers.dev`を使用します。**これは公開値**です。APIキーや接続キーは絶対に`VITE_*`へ入れないでください。
 4. **Actions → Deploy PWA to GitHub Pages → Run workflow** を実行。
 5. `https://daipan100g-dev.github.io/tv-notifier/`を開き、設定にWorker URLと個人用接続キーを入力。
 
