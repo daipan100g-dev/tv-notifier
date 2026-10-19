@@ -1,4 +1,6 @@
-import { CHANNELS, jstDate, matchesTitle, type Broadcast, type Preferences } from '../shared/model';
+import { CHANNELS, jstDate, matchesTitle, normalizeTitle, type Broadcast, type Preferences } from '../shared/model';
+
+const SERVICE_GROUP = { g1: 'g1', g2: 'g1', e1: 'e1', e3: 'e1', s1: 's1', s2: 's1', s5: 's5' } as const;
 
 type JsonObject = Record<string, unknown>;
 function object(value: unknown): JsonObject {
@@ -9,6 +11,7 @@ function object(value: unknown): JsonObject {
 export function parseNhk(value: unknown, date: string, prefs: Preferences, now: number): Broadcast[] {
   const data = object(value);
   const broadcasts: Broadcast[] = [];
+  const seen = new Set<string>();
   for (const channel of Object.keys(CHANNELS) as (keyof typeof CHANNELS)[]) {
     if (!prefs.channels.includes(channel)) continue;
     const service = object(data[channel]);
@@ -23,6 +26,9 @@ export function parseNhk(value: unknown, date: string, prefs: Preferences, now: 
       if (end <= now || start > now + 9 * 86400_000) continue;
       for (const f of prefs.favorites) {
         if (f.enabled && f.provider === 'nhk' && matchesTitle(event.name, f.title)) {
+          const key = JSON.stringify([f.id, SERVICE_GROUP[channel], start, end, normalizeTitle(event.name)]);
+          if (seen.has(key)) continue;
+          seen.add(key);
           const sourceId = typeof event.id === 'string' ? event.id : typeof event.identifier === 'string' ? event.identifier : undefined;
           broadcasts.push({
             id: crypto.randomUUID(), sourceId, favoriteId: f.id,
