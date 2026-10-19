@@ -1,0 +1,22 @@
+<!doctype html>
+<html lang="ja">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+    <meta name="theme-color" content="#153b3b" />
+    <meta name="description" content="好きなテレビ番組の次の放送を、再放送も含めてお知らせ。神奈川県向けの個人用テレビ番組通知PWA。" />
+    <meta name="apple-mobile-web-app-capable" content="yes" />
+    <meta name="apple-mobile-web-app-status-bar-style" content="default" />
+    <meta name="referrer" content="no-referrer" />
+    <meta http-equiv="Content-Security-Policy" content="default-src 'self'; base-uri 'self'; object-src 'none'; script-src 'self'; style-src 'self' 'unsafe-inline'; connect-src 'self' https: http://localhost:* http://127.0.0.1:* ws://localhost:* ws://127.0.0.1:*; img-src 'self' data:; form-action 'self'" />
+    <link rel="manifest" href="./manifest.webmanifest" />
+    <link rel="icon" href="./icon.svg" type="image/svg+xml" />
+    <link rel="apple-touch-icon" href="./icon-192.png" />
+    <title>放送メモ — 次の放送を、見逃さない。</title>
+  </head>
+  <body>
+    <div id="app"></div>
+    <noscript>このアプリにはJavaScriptが必要です。</noscript>
+    <script type="module" src="/src/main.ts"></script>
+  </body>
+</html>
