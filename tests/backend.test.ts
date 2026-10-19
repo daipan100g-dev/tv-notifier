@@ -55,7 +55,7 @@ test('subscription registration, encrypted test push, throttling, expiry and del
   let expired = false;
   const send = t.mock.method(globalThis, 'fetch', async (_url: string, options: RequestInit) => {
     assert.equal(options.redirect, 'error');
-    assert.equal(options.headers!['Content-Encoding' as keyof HeadersInit] ?? (options.headers as Record<string, string>)['Content-Encoding'] ?? (options.headers as Record<string, string>)['content-encoding'], 'aes128gcm');
+    assert.equal(new Headers(options.headers).get('content-encoding'), 'aes128gcm');
     assert.ok((options.body as Uint8Array).length > 100);
     return new Response(null, { status: expired ? 410 : 201 });
   });
@@ -88,7 +88,7 @@ test('eight staggered polls create only one notification per slot, shifts replac
       const date = url.searchParams.get('date')!;
       if (date === failDate) return new Response(null, { status: 503 });
       const start = Date.parse(`${date}T21:00:00+09:00`) + offset;
-      const event = { name: '地球ドラマチック テスト番組', startDate: new Date(start).toISOString(), endDate: new Date(start + 3600_000).toISOString() };
+      const event = { name: `地球ドラマチック テスト番組 ${date}`, startDate: new Date(start).toISOString(), endDate: new Date(start + 3600_000).toISOString() };
       return Response.json({ g1: { publication: [] }, g2: { publication: [] }, e1: { publication: [event] }, e3: { publication: [] } });
     }
     assert.equal(url.hostname, 'web.push.apple.com');
@@ -111,9 +111,9 @@ test('eight staggered polls create only one notification per slot, shifts replac
   assert.equal(nhkRequests, 8, 'duplicate cron does not consume NHK quota');
   for (const minute of minutes) await scheduled(env, base.getTime() + 3600_000 + minute * 60_000);
   assert.equal((await db.prepare('SELECT COUNT(*) AS n FROM deliveries').first<{ n: number }>())!.n, count);
-  const preserved = await db.prepare('SELECT id FROM broadcasts LIMIT 1').first<{ id: string }>();
-  offset = 30 * 60_000;
   failDate = jstDate(base.getTime() + 3 * 86400_000);
+  const preserved = await db.prepare("SELECT id FROM broadcasts WHERE json_extract(event, '$.queryDate') = ?").bind(failDate).first<{ id: string }>();
+  offset = 30 * 60_000;
   failPush = true;
   for (const minute of minutes) await scheduled(env, base.getTime() + 2 * 3600_000 + minute * 60_000);
   assert.equal((await db.prepare('SELECT status FROM source_status').first<{ status: string }>())!.status, 'partial');
